@@ -44,6 +44,7 @@ class Rank extends AdminBase
           $info = Db::name('user_rank')->where('id',$id)->find();
           if ($this->request->isPost()) {
               $data = $this->request->post();
+              $data['u_time'] = time();
               $res = Db::name('user_rank')->where('id',$data['id'])->update($data);
               //echo Db::name('task_config')->getLastSql();die;
               $res ? $this->success('修改成功',url('index')) : $this->error('操作失败');
