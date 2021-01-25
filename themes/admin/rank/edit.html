@@ -1,0 +1,93 @@
+{extend name="base" /}
+{block name="body"}
+<link type="text/css" rel="stylesheet" href="/public/static/admin/jedate/test/jeDate-test.css">
+<link type="text/css" rel="stylesheet" href="/public/static/admin/jedate/skin/jedate.css">
+<script type="text/javascript" src="/public/static/admin/jedate/src/jedate.js"></script>
+<style type="text/css">
+    .right-arrow {
+        position: absolute;
+        width: 64px;
+        margin-top: -0.2rem;
+        right: 20px;
+        height: 38px;
+        line-height: 38px;
+        padding: 0 18px;
+        background-color: #009688;
+        color: #fff;
+        white-space: nowrap;
+        text-align: center;
+        font-size: 14px;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+    }
+    .right-arrow:hover{
+        color: #000;
+    }
+</style>
+<div class="layui-body">
+    <!--tab标签-->
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class=""><a href="{:url('admin/Rank/index')}">绿色通道</a></li>
+            <a href="javascript:history.go(-1)" class="right-arrow">返回</a>
+
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <form class="layui-form form-container" action="{:url('admin/Rank/edit')}" method="post">
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">条件</label>
+                        <div class="layui-input-block">
+                           {$info.cond}
+                            {if condition="$info['level'] eq 10"}
+                            <input type="text" name="money" value="{$info.money}" required lay-verify="required" placeholder="" class="layui-input">
+                            {/if}
+                            {if condition="$info['level'] eq 20"}
+                            {/if}
+                            {if condition="$info['level'] eq 30"}
+                            <input type="text" name="team" value="{$info.team}" required lay-verify="required" placeholder="" class="layui-input">
+                            {/if}
+                            {if condition="$info['level'] eq 40"}
+                            <input type="text" name="team" value="{$info.team}" required lay-verify="required" placeholder="" class="layui-input">
+                            {/if}
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">有效天数</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="days" value="{$info.days}" class="layui-input layui-input-inline" >
+                        </div>
+                    </div>
+
+
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">提前进场时间（分）</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="prep" value="{$info.prep}" required lay-verify="required" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <input type="hidden" name="id" value="{$info.id}">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit lay-filter="*">保存</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script src="/public/static/admin/js/layui/lay/modules/laydate.js"></script>
+<script>
+    high_nav("{:url('index')}");
+
+
+</script>
+{/block}

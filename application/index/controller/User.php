@@ -900,14 +900,35 @@ class User extends IndexBase
     public function team()
     {
         $user_id = $this->user_id;
-        $team = Db::name('user_relation')->where('pid',$user_id)->select();
+        $level = input('level')?:1;
+        if($level==1){
+            $team = Db::name('user_relation')
+                ->alias('r')
+                ->join('user u','r.uid=u.id')
+                ->where('pid',$user_id)
+                ->field('r.*,u.nickname')
+                ->select();
+        }else{
+            $team = Db::name('user_relation')
+                ->alias('r')
+                ->join('user u','r.uid=u.id')
+                ->where('pid2',$user_id)
+                ->field('r.*,u.nickname')
+                ->select();
+        }
+
         foreach ($team as $key=>$val) {
             $map = [];
             $map['rel'] = ['like','%,'.$val['uid'].'%'];
             $count = Db::name('user_relation')->where($map)->count();
             $team[$key]['cnt'] = $count;
+            //统计收益
+            $shouyi = Db::name('money_log')->where(['from_id'=>$val['uid'],'type'=>4])->sum('amount');
+            $team[$key]['shouyi'] = $shouyi;
         }
-        return view()->assign('team',$team);
+        $this->assign('level',$level);
+        $this->assign('team',$team);
+        return $this->fetch();
     }
 
     public function system_message()

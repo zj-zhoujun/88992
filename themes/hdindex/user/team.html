@@ -49,19 +49,30 @@
     </div>
 </div>
       </div>
+
       <div class="page-bd">
+          <div class="weui-navbar">
+              <a class="weui-navbar__item {if condition='$level eq 1'}weui-bar__item--on{/if} color_9" href="{:url('team',['level'=>1])}">一级团队</a>
+              <a class="weui-navbar__item {if condition='$level eq 2'}weui-bar__item--on{/if} color_9" href="{:url('team',['level'=>2])}"> 二级团队 </a>
+          </div>
+
+
         <!-- 页面内容 -->
-        <div class="weui-cells">
+        <div class="weui-cells" style="padding-top: 44px;">
         {volist name="team" id="user"}
        <div class="weui-cell box">
               <div class="weui-cell__hd">
                 <img src="/public/static/index/assets/images/user.png" alt="">
               </div>
               <div class="weui-cell__bd">
+                  <div class="fs28 color_3 fw_b">
+                      <span>姓名：{$user.nickname|default='无'}</span>
+                  </div>
                 <div class="fs28 color_3 fw_b">
                     <span>{$user.username}</span>
                 </div>
                 <div class="fs24 color_9">ID {$user.uid}</div>
+                  <div class="fs24 color_9">推广收益 {$user.shouyi}</div>
               </div>
               <div class="weui-cell__ft">
                 <div class="fs30 color_3 fw_b">{$user.cnt}人</div>

@@ -131,6 +131,24 @@
                         </div>
                     </div>
 
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+                        <legend>抢购条件配置</legend>
+                    </fieldset>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">新会员钱包萝卜>=</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="qiang_new_user_wallet" placeholder="萝卜数量" autocomplete="off" class="layui-input"  value="{$base_config['qiang_new_user_wallet']|default=''}">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">老会员钱包萝卜>=</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="qiang_old_user_wallet" placeholder="萝卜数量" autocomplete="off" class="layui-input"  value="{$base_config['qiang_old_user_wallet']|default=''}">
+                            </div>
+                        </div>
+
+                    </div>
 
 
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">

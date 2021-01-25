@@ -126,6 +126,8 @@ class Index extends IndexBase
 
         $hasYuyue = $this->isYuyue($pig_id);
         if ($hasYuyue) $this->error('已预约');
+
+
         //电力
 
         if ($this->user['pay_points']<$pigInfo['pay_points']){
@@ -133,6 +135,20 @@ class Index extends IndexBase
         }
 
         $baseConfig = unserialize(Db::name('system')->where('name','base_config')->value('value'));
+
+        //萝卜要满足后台条件才可以(30天内为新会员)
+        $user_info = Db::name('user')->where('id',$this->user_id)->find();
+        $check_time = time()-30*86400;
+        if($user_info['create_time']>=$check_time){
+            $wallet_limit = $baseConfig['qiang_new_user_wallet'];
+        }else{
+            $wallet_limit = $baseConfig['qiang_old_user_wallet'];
+        }
+        if($this->user['pay_points']<$wallet_limit){
+            $this->error('萝卜数量不可低于'.$wallet_limit);
+        }
+
+
         $userPigsCount = Db::name('pig_order')->where(['uid'=>$this->user_id])->order('id','desc')->count();
         if (isset($baseConfig['qiangdan_limit'])&&$userPigsCount>=$baseConfig['qiangdan_limit']){
             $this->error('您库存的抢购超过最大限额，请等待成熟转让后再来抢哦');
