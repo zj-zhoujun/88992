@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,viewport-fit=cover">
+      <style>
+          *{ -webkit-touch-callout:none; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none;-ms-user-select:none; user-select:none; }
+          header, .top_fixed {-webkit-transform: translateZ(0);}
+          .bghead{text-align: center; width: 100%; height: 3rem;line-height: 2rem;padding-top: 0.5rem;}
+          .bghead .logo img {height: 1.3rem;}
+          @media screen and (max-width: 320px) {
+              .zc_goods_list .item .info { margin: 0rem !important; }
+          }
+          html{
+              font-size: 80px !important;
+          }
+          .index{
+              font-size: 43px !important;
+          }
+
+      </style>
+<link rel="stylesheet" href="/public/static/index/assets/css/zpui.css"/>
+<link rel="stylesheet" href="/public/static/index/assets/css/all.css"/>
+
+      <link rel="stylesheet" href="/public/style/assets/css/style.css"/>
+
+
+<style>
+              /* 隐藏顶部浮动栏选项  */
+        body { position: static !important; top:0px !important; }
+        iframe.goog-te-banner-frame { display: none !important; }
+        .goog-logo-link { display:none !important; }
+        .goog-te-gadget { color: transparent !important; overflow: hidden;}
+        .goog-te-balloon-frame{display: none !important;}
+
+        /*使原始文本弹出窗口隐藏*/
+        .goog-tooltip {display: none !important;}
+        .goog-tooltip:hover {display: none !important;}
+        .goog-text-highlight {background-color: transparent !important; border: none !important; box-shadow: none !important;}
+
+        /* 语言选择框颜色 */
+        .goog-te-combo {background-color:#848CB5; border-radius:8px;}
+ </style>
+    <title>交易大厅</title>
+  </head>
+  <style type="text/css">
+    img{
+      border-radius: 50%;
+    }
+  </style>
+  <body>
+  <div class="main">
+    <div id="wrap" style="z-index: 1000000;
+    position: fixed ! important;
+    right: -25px;
+    top: 8px;">
+    <!-- 谷歌语言 -->
+    <div id="google_translate_element"></div>
+   </div>
+    <div class="page appoint">
+      <div class="page-hd">
+        <div class="header bor-1px-b">
+    <div class="header-left">
+        <a href="javascript:history.go(-1)" class="left-arrow"></a>
+    </div>
+    <div class="header-title">交易大厅</div>
+    <div class="header-right">
+        <a href="#"></a>
+    </div>
+</div>
+      </div>
+      <div class="page-bd">
+        <!-- 页面内容 -->
+        <div class="weui-cells">
+        {volist name="list" id="vo"}
+       <div class="weui-cell box">
+              <div class="weui-cell__hd">
+                <img src="/public/static/index/assets/images/user.png" alt="">
+              </div>
+              <div class="weui-cell__bd">
+                <div class="fs24 color_9">
+                    转让方手机号：{$vo.mobile}
+                </div>
+                  <div class="fs24 color_9">
+                      动物金额：{$vo.price}
+                  </div>
+                  <div class="fs24 color_9">
+                      动物编号：{$vo.order_no}
+                  </div>
+              </div>
+              <div class="weui-cell__ft">
+                <div class="fs30 color_3 fw_b">
+                    <input type="button" class="but" onclick="qiang({$vo.id})" value="抢购" />
+                </div>
+              </div>
+          </div>
+
+         {/volist}
+          
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="index">
+        <div class="page-bd">
+            <div class="model">
+                <div class="modelBG"></div>
+                <div class="Box succeed" style="text-align: center;">
+                    <img src="/public/static/index/assets/images/succeedPig.png" alt="">
+                    <span class="fs36 fw_b">2小时内不付款将面临封号风险</span>
+                    <span class="fs36 fw_b"><a style="color:yellow" href="/index/User/adopt_log"  class="gotolog">前往抢购记录</a></span>
+                    <div class="closeBox" style="margin-top: 10%;" onclick="closeBox()"><img src="/public/static/index/assets/images/closeIcon.png" alt=""></div>
+                </div>
+                <div class="Box fail" style="text-align: center;">
+                    <img src="/public/static/index/assets/images/failPig.png" alt="" style="text-align: center">
+                    <span class="fs36 fw_b">好伤心<br>没抢购到</span>
+                    <!--<span class="fs36 fw_b"><a href="/dist/pages/adopt_log.html"  class="gotolog">前往抢购记录</a></span>-->
+                    <div class="closeBox" style="margin-top: 10%;" onclick="closeBox()"><img src="/public/static/index/assets/images/closeIcon.png" alt=""></div>
+                </div>
+                <div class="Box loading">
+
+                    <div class="qg_wait"><div id="loading-center"><div id="loading-center-absolute"><div id="object"></div><p>等待抢购结果<br>请不要关闭</p></div></div></div>
+
+                    <!--<div class="loadBox"><div></div><div></div><div></div><div></div><div></div></div>-->
+                    <!--<span class="fs36 fw_b">抢购中<br>请不要关闭</span>-->
+                </div>
+            </div>
+            <div class="model3" id="model">
+                <div class="modelBG3"></div>
+                <div class="Box3 loading">
+                    <div class="loadBox3"><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <audio src="/public/static/index/assets/audio/9888.wav" id="error"></audio>
+    <audio src="/public/static/index/assets/audio/10762.wav" id="success"></audio>
+    <script src="/public/static/index/assets/js/lib/jquery-2.1.4.js"></script>
+<script src="/public/static/index/assets/js/jquery-weui.min.js"></script>
+<script src="/public/static/index/assets/js/lib/fastclick.js"></script>
+<script src="/public/static/index/assets/js/layer.js"></script>
+<script src="/public/static/index/assets/js/ajaxplugin.js"></script>
+<script>
+    // $(function() {
+    //     FastClick.attach(document.body);
+    //     var url       = '/api/user/ajax_count_leader'
+    //     var data      = {}
+    //     var mehod = 'post';
+    //     __ajax(url,data,mehod,function(data){
+    //       console.log(data.data)
+    //       if(data.status == 200){
+    //           var str = '';
+    //           $.each(data.data.data, function(i, obj) {
+    //             str += '<div class="weui-cell box">';
+    //             str += '<div class="weui-cell__hd">';
+    //             str += '<img src="/public/static/index/assets/images/myIcon07.png" alt="">';
+    //             str += '</div>';
+    //             str += '<div class="weui-cell__bd">';
+    //             str += '<div class="fs28 color_3 fw_b">';
+    //             str += '<span>'+obj.nickname+'</span>';
+    //             str += '</div>';
+    //             str += '<div class="fs24 color_9">ID '+obj.mobile+'</div>';
+    //             str += '</div>';
+    //             str += '<div class="weui-cell__ft">';
+    //             str += '<div class="fs30 color_3 fw_b">'+obj.underling_number+'人</div>';
+    //             str += '<div class="fs24 color_9">团队人数</div>';
+    //             str += '</div>';
+    //             str += '</div>';
+    //           });
+    //           $(".weui-cells").append(str);
+    //
+    //       }else{
+    //           layer.open({
+    //           content: data.message
+    //           ,skin: 'msg'
+    //           ,time: 1 //2秒后自动关闭
+    //         });
+    //       }
+    //   });
+    // });
+
+</script>
+    <script>
+        //点击抢购
+        function qiang(id){
+            var endtime =  $(this).data('endtime');
+
+            $('.model').show();
+            //2019-3-12-----------
+            $('.succeed').hide();
+            $('.fail').hide();
+
+
+            $.get('/index/Index/flash_buy',{id:id},function(data){
+
+                //已经返回结果一次结果
+                var _data = data;
+                console.log(_data);
+                if(_data.code == 1){
+                    //alert('进入成功');
+                    var _aw_time = $('input[name="game_openaward"]').val();
+                    var jk_open_time = {$base_config['jk_open_time']|default=10}*1000;
+
+
+                    window.setTimeout(function(){
+                        //查询次数
+                        var sel_count =  10000;
+                        var _interval = window.setInterval(function(){
+                            console.log(sel_count);
+                            if(sel_count > 0){
+                                $.post('/index/Index/checkFlushOpen',{id:id,endtime:endtime},function(data){
+                                    if(data.code == 1 || data.code == 2){
+                                        window.clearInterval(_interval);
+                                        if(data.code == 1){
+                                            $('.loading').hide();
+                                            $('.succeed').show();
+                                            var success = document.getElementById('success');
+                                            $('#pig_level_'+ id +' .btns').html('<a class="btn-buy-no buttoning level_btn fanzhi">产矿中</a>')
+                                            success.play();//audio.play();// 这个就是播放
+                                        }else{
+                                            $('.loading').hide();
+                                            $('.fail').show();
+                                            $('#pig_level_'+ id +' .btns').html('<a class="btn-buy-no buttoning level_btn fanzhi">产矿中</a>')
+                                            var error = document.getElementById('error');
+                                            error.play();//audio.play();// 这个就是播放
+                                        }
+                                    }else{
+                                        sel_count --;
+                                    }
+                                })
+                            }else{
+                                window.clearInterval(_interval);
+                                $('.model').hide();
+                                $('.loading').hide();
+                                $('.fail').show();
+                                var error = document.getElementById('error');
+                                error.play();//audio.play();// 这个就是播放
+                                layer.open({
+                                    content: '网络异常'
+                                    ,time: 2
+                                    ,skin: 'msg'
+                                });
+
+                            }
+
+                        },jk_open_time)
+                    },_aw_time);
+                }else{
+                    $('.model').hide();
+                    $('.loading').hide();
+                    // $('.fail').show();
+                    // var error = document.getElementById('error');
+                    // error.play();//audio.play();// 这个就是播放
+
+                    layer.open({
+                        content:_data.msg
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                }
+                //第二次访问查看是否有中奖
+            });
+        };
+
+        function closeBox(){
+            $('.model').hide();
+        }
+    </script>
+      
+  </body>
+</html>

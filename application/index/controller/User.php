@@ -336,8 +336,8 @@ class User extends IndexBase
             if ($userSellCount>$allSellCount) $this->error('每天最多售出'.$allSellCount.'次');
 
 
-            if (!$this->user['pay_password']) $this->success('请先设置二级密码','set_paypwd');
-            if (md5($data['data']['paypwd'].config('salt')) != $this->user['pay_password']) $this->error('二级密码不正确');
+            //if (!$this->user['pay_password']) $this->success('请先设置二级密码','set_paypwd');
+            //if (md5($data['data']['paypwd'].config('salt')) != $this->user['pay_password']) $this->error('二级密码不正确');
 
             //数目检测
             if ($data['data']['number']<=0 || !is_numeric($data['data']['number'])) $this->error('数目不合法');
@@ -370,9 +370,12 @@ class User extends IndexBase
             if ($data['data']['number']>$maxPrice || $data['data']['number']<$minPrice) {
                 $this->error('请输入'.$minPrice.'--'.$maxPrice.'的出售数目');
             }
+            $id = $data['data']['pid'];
+            $order_info = Db::name('pig_order')->where(['uid'=>$this->user_id,'id'=>$id])->find();
+            $pid = $order_info['pig_id'];
             //检测对应的猪的级别
             if(isset($data['data']['pid'])&&$data['data']['pid']){
-                $pigInfo = model('Pig')->where(['id'=>$data['data']['pid']])->find();
+                $pigInfo = model('Pig')->where(['id'=>$pid])->find();
 
                 if($pigInfo['max_price']<$data['data']['number'] || $pigInfo['min_price']>$data['data']['number']){
                     $this->error('请输入'.$pigInfo['name'].'的出售区间'.$pigInfo['min_price'].'--'.$pigInfo['max_price']);
@@ -380,6 +383,19 @@ class User extends IndexBase
             }else{
                 $pigInfo = model('Pig')->pigLevel($data['data']['number']);
             }
+
+            //转卖要扣除收益 start
+            $kouchu_bili = $baseConfig['zhuanmai_kouchu']?:0;
+
+
+            $shouyi_total = round(($order_info['price']*($pigInfo['contract_revenue']/100)),2);
+            $kouchu = bcmul($shouyi_total,$kouchu_bili/100);
+            if($this->user['pay_points']<$kouchu){
+                $this->error('萝卜余额不足！');
+            }
+            //转卖要扣除收益 end
+
+
             if($pigInfo['selled_stock'] < $pigInfo['max_stock'] ){
                 //扣減库存
                 model('Pig')->where(['id'=>['eq',$pigInfo['id']], 'selled_stock'=>['lt', $pigInfo['max_stock']]])->setInc('selled_stock');
@@ -413,6 +429,10 @@ class User extends IndexBase
                     Db::name('user_pigs')->where('id',$sell_id)->update(['order_id'=>$order_id,'end_time'=>time()]);
                     //推广收益减少记录
                     moneyLog($this->user_id,$this->user_id,$sharetype,-$saveDate['price'],2,'售出'.$sharetypename);
+
+                    //萝卜收益减少记录
+                    moneyLog($this->user_id,$this->user_id,'pay_points',-$kouchu,2,'宠物'.$id.'转卖售出');
+                    Db::name('pig_order')->where('id',$id)->update(['is_sell'=>1,'sell_time'=>time()]);
                     $this->success('出售成功');
                 } else {
                     $this->error('出售失败');

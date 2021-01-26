@@ -174,6 +174,7 @@ class User extends AdminBase
                     //$user->pay_password =md5($data['pwd_pay'].Config::get('salt'));
                     $saveDate['pay_password'] = md5($data['pwd_pay'].Config::get('salt'));
                 }
+                $saveDate['buy_limit'] = $data['buy_limit'];
                 //dump($user);die;
                 if (Db::name('user')->where('id',$data['id'])->update($saveDate)) {
                     //echo Db::name('user')->getLastsql();die;

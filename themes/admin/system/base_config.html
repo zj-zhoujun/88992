@@ -156,6 +156,12 @@
                     </fieldset>
                     <div class="layui-form-item">
                         <div class="layui-inline">
+                            <label class="layui-form-label">转卖扣除收益百分比（%）</label>
+                            <div class="layui-input-inline" style="width:300px">
+                                <input type="text" name="zhuanmai_kouchu" placeholder="转卖扣除收益百分比（%）" autocomplete="off" class="layui-input"  value="{$base_config['zhuanmai_kouchu']|default=''}">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
                             <label class="layui-form-label">成熟时间差(秒)</label>
                             <div class="layui-input-inline" style="width:300px">
                                 <input type="text" name="sell_end_time" placeholder="成熟时间=交易确认时间+合约期-成熟时间差" autocomplete="off" class="layui-input"  value="{$base_config['sell_end_time']|default=''}">

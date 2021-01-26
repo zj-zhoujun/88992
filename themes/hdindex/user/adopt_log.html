@@ -241,6 +241,11 @@
                 {/if}
                 {if condition="$vl['is_end'] eq 1"}
                 <div class="enj">已完成（结束收益）</div>
+                {if condition="$vl['is_sell'] eq 1"}
+                <div class="button"><div class="fs30 fw_b color_f">已转卖</div></div>
+                {else/}
+                <div class="button" onclick="zhuanmai({$vl.id},{$vl.price})"><div class="fs30 fw_b color_f">转卖</div></div>
+                {/if}
                 {/if}
               </div>
 
@@ -816,7 +821,38 @@
         })
 
       });
+      function zhuanmai($id,$number) {
+          var pid = $id;
+          var typeid = $('.typeid').val();
+          var url = '/index/User/sell';
+          var mehod = 'post';
+          var data = {};
+          //data.paypwd = paypwd;
+          data.number = $number;
+          data.typeid = 0;
+          data.pid = pid;
+          __ajax(url, data, mehod, function (res) {
+              if (res.code == 1) {
+                  layer.open({
+                      content: res.msg
+                      , skin: 'msg'
+                      , time: 1 //2秒后自动关闭
+                  });
+                  window.setTimeout(function () {
+                      //window.history.go(-1);
+                      location.href = res.url
+                  }, 1000);
+              } else {
+                  layer.open({
+                      content: res.msg
+                      , skin: 'msg'
+                      , time: 1 //2秒后自动关闭
+                  });
+              }
 
+
+          });
+      }
 
     </script>
 

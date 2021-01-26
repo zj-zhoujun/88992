@@ -212,28 +212,28 @@ class Plan extends Controller
             $parents = $this->threeParents($val['uid']);
             if ($parents['pid'] > 0) {
                 $firstReward = $contract_revenue * $config['firt_parent'] / 100;
-                $this->addReward($parents['pid'], $val['uid'], 'share_integral', $firstReward, 2, '一代推广');
+                $this->addReward($parents['pid'], $val['uid'], 'pay_points', $firstReward, 2, '一代推广');
                 //累计奖励
                 Db::name('user')->where('id', $parents['pid'])->setInc('total_share_integral');
                 //资产记录
-                moneyLog($parents['pid'], $val['uid'], 'share_integral', $firstReward, 4, '一代推广收益');
+                moneyLog($parents['pid'], $val['uid'], 'pay_points', $firstReward, 4, '一代推广收益');
             }
             if ($parents['pid2'] > 0) {
                 $secondReward = $contract_revenue * $config['second_parent'] / 100;
-                $this->addReward($parents['pid2'], $val['uid'], 'share_integral', $secondReward, 2, '二代推广');
+                $this->addReward($parents['pid2'], $val['uid'], 'pay_points', $secondReward, 2, '二代推广');
                 //累计奖励
                 Db::name('user')->where('id', $parents['pid2'])->setInc('total_share_integral');
                 //资产记录
-                moneyLog($parents['pid'], $val['uid'], 'share_integral', $secondReward, 4, '二代推广收益');
+                moneyLog($parents['pid'], $val['uid'], 'pay_points', $secondReward, 4, '二代推广收益');
             }
 
             if ($parents['pid3'] > 0) {
                 $thirdReward = $contract_revenue * $config['third_parent'] / 100;
-                $this->addReward($parents['pid3'], $val['uid'], 'share_integral', $thirdReward, 2, '三代推广');
+                $this->addReward($parents['pid3'], $val['uid'], 'pay_points', $thirdReward, 2, '三代推广');
                 //累计奖励
                 Db::name('user')->where('id', $parents['pid3'])->setInc('total_share_integral');
                 //资产记录
-                moneyLog($parents['pid'], $val['uid'], 'share_integral', $thirdReward, 4, '三代推广收益');
+                moneyLog($parents['pid'], $val['uid'], 'pay_points', $thirdReward, 4, '三代推广收益');
             }
 
         }

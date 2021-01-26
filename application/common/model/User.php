@@ -198,4 +198,9 @@ class User extends Model
         }
         dump($prelArr);die;
     }
+
+    public function uplv($user_id,$rank){
+        Db::name('user')->where('id',$user_id)->update(['user_rank'=>$rank,'rank_time'=>time()]);
+        return true;
+    }
 }

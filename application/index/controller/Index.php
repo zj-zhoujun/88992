@@ -232,12 +232,22 @@ class Index extends IndexBase
     {
         $data = $this->request->param();
         //dump($data);
-        $pig_id = $data['id'];
+        $id = $data['id'];
+        $pig_order = Db::name('pig_order')->where('id',$id)->find();
+        $pig_id = $pig_order['pig_id'];
         $pigInfo =  Db::name('task_config')->where('id',$pig_id)->find();
         $nowTime = date('H:i');
         if ($nowTime<$pigInfo['start_time'] || $nowTime>$pigInfo['end_time'])
         {
             $this->error('不是开抢时间');
+        }
+        $buy_limit = Db::name('user')->where('id',$this->user_id)->value('buy_limit');
+        if($buy_limit>0){
+            //今日已抢数量
+            $day_num = Db::name('qiang_log')->where(['user_id'=>$this->user_id,'w_date'=>date('Ymd')])->count();
+            if($day_num>=$buy_limit){
+                $this->error('对不起，您每日抢宠最大次数'.$buy_limit);
+            }
         }
         //是否实名通过
         $authMap = [];
@@ -318,6 +328,11 @@ class Index extends IndexBase
             //sleep($config['jk_open_time']);
             $result = $this->lijiqiang($id);
             if($result==1){
+                $data = [];
+                $data['user_id'] = $this->user_id;
+                $data['w_date'] = date('Ymd');
+                $data['w_time'] = time();
+                Db::name('qiang_log')->insert($data);
                 return json(['code'=>1,'msg'=>'恭喜']);
             }else if($result==2){
                 return json(['code'=>2,'msg'=>'很遗憾']);
@@ -338,6 +353,11 @@ class Index extends IndexBase
 
                 if (!empty($luckyUsers)) {
                     if (in_array($uid,$luckyUsers)) {
+                        $data = [];
+                        $data['user_id'] = $this->user_id;
+                        $data['w_date'] = date('Ymd');
+                        $data['w_time'] = time();
+                        Db::name('qiang_log')->insert($data);
                         return json(['code'=>1,'msg'=>'恭喜']);
                     } else {
                         return json(['code'=>2,'msg'=>'很遗憾']);
@@ -353,7 +373,9 @@ class Index extends IndexBase
     }
 
 
-    public function lijiqiang($id){
+    public function lijiqiang($order_id){
+        $pig_order = Db::name('pig_order')->where('id',$order_id)->find();
+        $id = $pig_order['pig_id'];
         $map['id'] = $id;
         $map['is_open'] = 0;
         $pigInfo = Db::name('task_config')->where($map)->order('start_time')->find();
@@ -362,6 +384,7 @@ class Index extends IndexBase
         $pigMap = [];
         $pigMap['pig_id'] = $pigInfo['id'];
         $pigMap['status'] = 0;
+        $pigMap['id'] = $order_id;
         $piglist = Db::name('pig_order')->where($pigMap)->select();
 
         //查询预约的人
@@ -372,8 +395,9 @@ class Index extends IndexBase
         $userMap['buy_type'] = ['<>', 0]; //buy_type0只预约，1只抢购，2预约加抢购    只预约了，是不能参与的
 
         $yuyueInfo = Db::name('yuyue')->where($userMap)->find();
-
         $uid = $this->user_id;
+        //dump($piglist);
+        //dump($yuyueInfo);exit;
         if (!empty($piglist) && $yuyueInfo) {
             //有卖单
             foreach ($piglist as $val) {
