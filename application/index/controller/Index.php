@@ -136,18 +136,6 @@ class Index extends IndexBase
 
         $baseConfig = unserialize(Db::name('system')->where('name','base_config')->value('value'));
 
-        //萝卜要满足后台条件才可以(30天内为新会员)
-        $user_info = Db::name('user')->where('id',$this->user_id)->find();
-        $check_time = time()-30*86400;
-        if($user_info['create_time']>=$check_time){
-            $wallet_limit = $baseConfig['qiang_new_user_wallet'];
-        }else{
-            $wallet_limit = $baseConfig['qiang_old_user_wallet'];
-        }
-        if($this->user['pay_points']<$wallet_limit){
-            $this->error('萝卜数量不可低于'.$wallet_limit);
-        }
-
 
         $userPigsCount = Db::name('pig_order')->where(['uid'=>$this->user_id])->order('id','desc')->count();
         if (isset($baseConfig['qiangdan_limit'])&&$userPigsCount>=$baseConfig['qiangdan_limit']){
@@ -241,6 +229,21 @@ class Index extends IndexBase
         {
             $this->error('不是开抢时间');
         }
+
+        //萝卜要满足后台条件才可以(30天内为新会员)
+        $baseConfig = unserialize(Db::name('system')->where('name','base_config')->value('value'));
+        $user_info = Db::name('user')->where('id',$this->user_id)->find();
+        $check_time = time()-30*86400;
+        if($user_info['create_time']>=$check_time){
+            $wallet_limit = $baseConfig['qiang_new_user_wallet'];
+        }else{
+            $wallet_limit = $baseConfig['qiang_old_user_wallet'];
+        }
+        if($this->user['pay_points']<$wallet_limit){
+            $this->error('萝卜数量不可低于'.$wallet_limit);
+        }
+
+
         $buy_limit = Db::name('user')->where('id',$this->user_id)->value('buy_limit');
         if($buy_limit>0){
             //今日已抢数量

@@ -92,6 +92,12 @@ class Wealth extends AdminBase
                 $mark='系统扣除';
             }
 
+            if($data['money_type']=='pay_points'){
+                $user_rank_set = Db::name('user_rank')->where(['level'=>10])->order('level desc')->value('money');
+                if($money>=$user_rank_set){
+                    model('User')->uplv($id,20);
+                }
+            }
             //dump($money);die;
             $res = moneyLog($id,0,$data['money_type'],$money,1,$mark);
             if ($res) {
