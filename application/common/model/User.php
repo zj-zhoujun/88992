@@ -200,6 +200,10 @@ class User extends Model
     }
 
     public function uplv($user_id,$rank){
+        $user_rank = Db::name('user')->where('id',$user_id)->value('user_rank');
+        if($user_rank>=$rank){
+            return true;
+        }
         Db::name('user')->where('id',$user_id)->update(['user_rank'=>$rank,'rank_time'=>time()]);
         return true;
     }
