@@ -277,6 +277,11 @@ class User extends IndexBase
             Db::name('user')->where('id',$tranUser['id'])->setInc('rc_count',$number);
             //会员等级
             model('UserLevel')->updateLevel($tranUser['id']);
+            //升级绿色通道
+            $user_rank_set = Db::name('user_rank')->where(['level'=>10])->order('level desc')->value('money');
+            if($number>=$user_rank_set){
+                model('User')->uplv($tranUser['id'],20);
+            }
             $this->success('转增成功');
         }
         return view()->assign('baseConfig',$baseConfig);
@@ -433,6 +438,36 @@ class User extends IndexBase
                     //萝卜收益减少记录
                     moneyLog($this->user_id,$this->user_id,'pay_points',-$kouchu,2,'宠物'.$id.'转卖售出');
                     Db::name('pig_order')->where('id',$id)->update(['is_sell'=>1,'sell_time'=>time()]);
+                    //发放推广收益
+                    //上级分成
+                    $pigInfo = Db::name('task_config')->where('id', $id)->field('id,contract_revenue,doge')->find();
+                    $parents = $this->threeParents($this->user_id);
+                    $contract_revenue = $saveDate['price'] * $pigInfo['contract_revenue'] / 100;
+                    if ($parents['pid'] > 0) {
+                        $firstReward = $contract_revenue * $baseConfig['firt_parent'] / 100;
+                        $this->addReward($parents['pid'], $this->user_id, 'pay_points', $firstReward, 2, '一代推广');
+                        //累计奖励
+                        Db::name('user')->where('id', $parents['pid'])->setInc('total_share_integral');
+                        //资产记录
+                        moneyLog($parents['pid'], $this->user_id, 'pay_points', $firstReward, 4, '一代推广收益');
+                    }
+                    if ($parents['pid2'] > 0) {
+                        $secondReward = $contract_revenue * $baseConfig['second_parent'] / 100;
+                        $this->addReward($parents['pid2'], $this->user_id, 'pay_points', $secondReward, 2, '二代推广');
+                        //累计奖励
+                        Db::name('user')->where('id', $parents['pid2'])->setInc('total_share_integral');
+                        //资产记录
+                        moneyLog($parents['pid'], $this->user_id, 'pay_points', $secondReward, 4, '二代推广收益');
+                    }
+
+                    if ($parents['pid3'] > 0) {
+                        $thirdReward = $contract_revenue * $baseConfig['third_parent'] / 100;
+                        $this->addReward($parents['pid3'], $this->user_id, 'pay_points', $thirdReward, 2, '三代推广');
+                        //累计奖励
+                        Db::name('user')->where('id', $parents['pid3'])->setInc('total_share_integral');
+                        //资产记录
+                        moneyLog($parents['pid'],  $this->user_id, 'pay_points', $thirdReward, 4, '三代推广收益');
+                    }
                     $this->success('出售成功');
                 } else {
                     $this->error('出售失败');
@@ -444,6 +479,25 @@ class User extends IndexBase
         }
         $piglist = model('Pig')->where('selled_stock < max_stock')->select();
         return view()->assign(['piglist'=>$piglist]);
+    }
+
+    public function threeParents($uid)
+    {
+        $relation = Db::name('user_relation')->where('uid', $uid)->find();
+        return $relation;
+    }
+
+    public function addReward($uid, $from_id, $currency, $amount, $type, $note)
+    {
+        $rewardLog = [];
+        $rewardLog['uid'] = $uid;
+        $rewardLog['from_id'] = $from_id;
+        $rewardLog['currency'] = $currency;
+        $rewardLog['amount'] = $amount;
+        $rewardLog['type'] = $type;
+        $rewardLog['note'] = $note;
+        $rewardLog['create_time'] = time();
+        Db::name('user_reward')->insert($rewardLog);
     }
 
     /**

@@ -209,32 +209,32 @@ class Plan extends Controller
             $this->addReward($val['uid'], 0, 'doge', $doge, 5, 'DOGE收益');
             moneyLog($val['uid'], 0, 'doge', $doge, 6, 'DOGE收益');
             //上级分成
-            $parents = $this->threeParents($val['uid']);
-            if ($parents['pid'] > 0) {
-                $firstReward = $contract_revenue * $config['firt_parent'] / 100;
-                $this->addReward($parents['pid'], $val['uid'], 'pay_points', $firstReward, 2, '一代推广');
-                //累计奖励
-                Db::name('user')->where('id', $parents['pid'])->setInc('total_share_integral');
-                //资产记录
-                moneyLog($parents['pid'], $val['uid'], 'pay_points', $firstReward, 4, '一代推广收益');
-            }
-            if ($parents['pid2'] > 0) {
-                $secondReward = $contract_revenue * $config['second_parent'] / 100;
-                $this->addReward($parents['pid2'], $val['uid'], 'pay_points', $secondReward, 2, '二代推广');
-                //累计奖励
-                Db::name('user')->where('id', $parents['pid2'])->setInc('total_share_integral');
-                //资产记录
-                moneyLog($parents['pid'], $val['uid'], 'pay_points', $secondReward, 4, '二代推广收益');
-            }
-
-            if ($parents['pid3'] > 0) {
-                $thirdReward = $contract_revenue * $config['third_parent'] / 100;
-                $this->addReward($parents['pid3'], $val['uid'], 'pay_points', $thirdReward, 2, '三代推广');
-                //累计奖励
-                Db::name('user')->where('id', $parents['pid3'])->setInc('total_share_integral');
-                //资产记录
-                moneyLog($parents['pid'], $val['uid'], 'pay_points', $thirdReward, 4, '三代推广收益');
-            }
+//            $parents = $this->threeParents($val['uid']);
+//            if ($parents['pid'] > 0) {
+//                $firstReward = $contract_revenue * $config['firt_parent'] / 100;
+//                $this->addReward($parents['pid'], $val['uid'], 'pay_points', $firstReward, 2, '一代推广');
+//                //累计奖励
+//                Db::name('user')->where('id', $parents['pid'])->setInc('total_share_integral');
+//                //资产记录
+//                moneyLog($parents['pid'], $val['uid'], 'pay_points', $firstReward, 4, '一代推广收益');
+//            }
+//            if ($parents['pid2'] > 0) {
+//                $secondReward = $contract_revenue * $config['second_parent'] / 100;
+//                $this->addReward($parents['pid2'], $val['uid'], 'pay_points', $secondReward, 2, '二代推广');
+//                //累计奖励
+//                Db::name('user')->where('id', $parents['pid2'])->setInc('total_share_integral');
+//                //资产记录
+//                moneyLog($parents['pid'], $val['uid'], 'pay_points', $secondReward, 4, '二代推广收益');
+//            }
+//
+//            if ($parents['pid3'] > 0) {
+//                $thirdReward = $contract_revenue * $config['third_parent'] / 100;
+//                $this->addReward($parents['pid3'], $val['uid'], 'pay_points', $thirdReward, 2, '三代推广');
+//                //累计奖励
+//                Db::name('user')->where('id', $parents['pid3'])->setInc('total_share_integral');
+//                //资产记录
+//                moneyLog($parents['pid'], $val['uid'], 'pay_points', $thirdReward, 4, '三代推广收益');
+//            }
 
         }
         Log::record('[ userReward ] 结束执行', 'info');

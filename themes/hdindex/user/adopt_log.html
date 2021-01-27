@@ -242,9 +242,11 @@
                 {if condition="$vl['is_end'] eq 1"}
                 <div class="enj">已完成（结束收益）</div>
                 {if condition="$vl['is_sell'] eq 1"}
-                <div class="button"><div class="fs30 fw_b color_f">已转卖</div></div>
+                <div class="enj">已转卖</div>
                 {else/}
+                <div class="enj">
                 <div class="button" onclick="zhuanmai({$vl.id},{$vl.price})"><div class="fs30 fw_b color_f">转卖</div></div>
+                </div>
                 {/if}
                 {/if}
               </div>

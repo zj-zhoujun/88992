@@ -35,9 +35,10 @@ class TradeHome extends IndexBase
         }
         $pigInfo =  Db::name('task_config')->where('id',$id)->find();
         $start_time = $pigInfo['start_time'];//开抢时间
-        $enter_time = $start_time-$prep*60;
-        $enter_time = date('H:i',time()-$prep*60);
-        if ($enter_time<$start_time || date('H:i')>$pigInfo['end_time'])
+
+        $enter_time = date('H:i',strtotime($start_time)-$prep*60);
+
+        if ($enter_time>date('H:i') || date('H:i')>$pigInfo['end_time'])
         {
             $this->error('不是开抢时间,不可进场');
         }
