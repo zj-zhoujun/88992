@@ -416,7 +416,7 @@ class User extends IndexBase
                 $saveDate['pig_no'] = create_trade_no();
                 $saveDate['status'] = 1;
                 $saveDate['create_time'] = time();
-                $saveDate['end_time'] = time()+$pigInfo['cycle']*24*3600;
+                $saveDate['end_time'] = time()+$pigInfo['cycle']*60;
                 $sell_id = Db::name('user_pigs')->insertGetId($saveDate);
                 //生成订单
                 $sellOrder = [];
@@ -481,6 +481,26 @@ class User extends IndexBase
         return view()->assign(['piglist'=>$piglist]);
     }
 
+    /**
+     * @return $this 提货
+     */
+    public function tihuo()
+    {
+        if ($this->request->isPost()) {
+            $data = $this->request->post();
+
+            $id = $data['data']['pid'];
+            $order_info = Db::name('pig_order')->where(['id'=>$id])->update(['is_tihuo'=>1,'tihuo_time'=>time()]);
+
+            $this->success('提货成功');
+
+        }
+
+
+        $piglist = model('Pig')->where('selled_stock < max_stock')->select();
+        return view()->assign(['piglist'=>$piglist]);
+    }
+
     public function threeParents($uid)
     {
         $relation = Db::name('user_relation')->where('uid', $uid)->find();
@@ -528,7 +548,9 @@ class User extends IndexBase
 //        $wclist['uid'] = $uid;
 //        $wclist['status'] = 2;
 //        $wclist = Db::name('pig_info')->where($wcMap)->select();
-        return view()->assign(['loglist'=>$adoptLog,'sslist'=>$sslist,'time'=>$time,'cancel_time'=>$cancel_time]);
+        $baseConfig = unserialize(Db::name('system')->where('name','base_config')->value('value'));
+
+        return view()->assign(['loglist'=>$adoptLog,'sslist'=>$sslist,'time'=>$time,'cancel_time'=>$cancel_time,'kouchu_bili'=>$baseConfig['zhuanmai_kouchu']]);
     }
 
     /**

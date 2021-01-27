@@ -470,7 +470,7 @@ class Task extends AdminBase
         $saveDate['pig_no'] = create_trade_no();
         $saveDate['status'] = 1;
         $saveDate['create_time'] = time();
-        $saveDate['end_time'] = time()+$pigInfo['cycle']*24*3600;
+        $saveDate['end_time'] = time()+$pigInfo['cycle']*60;
         $sell_id = Db::name('user_pigs')->insertGetId($saveDate);
         //生成订单
         $sellOrder = [];

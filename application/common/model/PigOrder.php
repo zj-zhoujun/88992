@@ -54,7 +54,7 @@ class PigOrder extends Model
             $userPig['from_id'] = $orderInfo['sell_id'];
             $userPig['price'] = $orderInfo['price'];
             $userPig['create_time'] = time();
-            $userPig['end_time'] = time()+$pigInfo['cycle']*24*3600-$sell_end_time;
+            $userPig['end_time'] = time()+$pigInfo['cycle']*60-$sell_end_time;
             Db::name('user_pigs')->where('order_id',$id)->update($userPig);
             //增加推荐人推荐的购买次数,满足条件升级绿色通道
             $intro_id = Db::name('user_relation')->where('uid',$orderInfo['uid'])->value('pid');

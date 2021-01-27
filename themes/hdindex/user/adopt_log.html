@@ -243,7 +243,12 @@
                 <div class="enj">已完成（结束收益）</div>
                 {if condition="$vl['is_sell'] eq 1"}
                 <div class="enj">已转卖</div>
-                {else/}
+                {elseif condition="$vl['is_tihuo'] eq 1" /}
+                <div class="enj">已提货</div>
+                {else /}
+                <div class="enj">
+                  <div class="button" onclick="tihuo({$vl.id},{$vl.price})"><div class="fs30 fw_b color_f">提货</div></div>
+                </div>
                 <div class="enj">
                 <div class="button" onclick="zhuanmai({$vl.id},{$vl.price})"><div class="fs30 fw_b color_f">转卖</div></div>
                 </div>
@@ -824,6 +829,61 @@
 
       });
       function zhuanmai($id,$number) {
+          var kouchu_bili = '{$kouchu_bili}';
+          var kouchu = $number*kouchu_bili/100;
+          var content = '根据转卖规则，你再转卖前需支付买入价的'+kouchu_bili+'%作为手续费，支付前请确认如下信息：' +
+              '你的购买单价为：'+$number+'元，您的转卖单价为：'+$number+'元，你实付的转卖手续费为：'+kouchu+'电力，（提示L:请在支付前确认你的电力' +
+              '大于 电力方可转卖成功）';
+          layer.open({
+              skin: 'layui-layer-rim', //加上边框
+              btn: ['确认转拍','取消'], //按钮
+              offset: 'rb', //右下角弹出
+              time: 2000, //2秒后自动关闭
+              area: ['420px', '240px'],
+              title: "{$news['title']}", //不显示标题
+              content: content,
+              yes: function(){
+                  console.log(456);
+                  var pid = $id;
+                  var typeid = $('.typeid').val();
+                  var url = '/index/User/sell';
+                  var mehod = 'post';
+                  var data = {};
+                  //data.paypwd = paypwd;
+                  data.number = $number;
+                  data.typeid = 0;
+                  data.pid = pid;
+                  __ajax(url, data, mehod, function (res) {
+                      if (res.code == 1) {
+                          layer.open({
+                              content: res.msg
+                              , skin: 'msg'
+                              , time: 1 //2秒后自动关闭
+                          });
+                          window.setTimeout(function () {
+                              //window.history.go(-1);
+                              location.href = res.url
+                          }, 1000);
+                      } else {
+                          layer.open({
+                              content: res.msg
+                              , skin: 'msg'
+                              , time: 1 //2秒后自动关闭
+                          });
+                      }
+
+
+                  });
+              },
+              end: function(){
+                  console.log(789);
+                  //确定阅读
+                  //var id = "{$news['id']}";
+                  // $.post("{:url('is_read')}",{id:id},function(data){},'json')
+              }
+          });
+          console.log(123);
+          return false;
           var pid = $id;
           var typeid = $('.typeid').val();
           var url = '/index/User/sell';
@@ -832,6 +892,36 @@
           //data.paypwd = paypwd;
           data.number = $number;
           data.typeid = 0;
+          data.pid = pid;
+          __ajax(url, data, mehod, function (res) {
+              if (res.code == 1) {
+                  layer.open({
+                      content: res.msg
+                      , skin: 'msg'
+                      , time: 1 //2秒后自动关闭
+                  });
+                  window.setTimeout(function () {
+                      //window.history.go(-1);
+                      location.href = res.url
+                  }, 1000);
+              } else {
+                  layer.open({
+                      content: res.msg
+                      , skin: 'msg'
+                      , time: 1 //2秒后自动关闭
+                  });
+              }
+
+
+          });
+      }
+
+      function tihuo($id) {
+          var pid = $id;
+          var url = '/index/User/tihuo';
+          var mehod = 'post';
+          var data = {};
+          //data.paypwd = paypwd;
           data.pid = pid;
           __ajax(url, data, mehod, function (res) {
               if (res.code == 1) {
