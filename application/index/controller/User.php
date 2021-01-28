@@ -365,7 +365,7 @@ class User extends IndexBase
 
             }
 
-            if ($data['data']['number']>$this->user[$sharetype]) $this->error($sharetypename.'余额不足');
+            //if ($data['data']['number']>$this->user[$sharetype]) $this->error($sharetypename.'余额不足');
 
             //最大值
             $maxPrice = Db::name('task_config')->max('max_price');
@@ -394,6 +394,7 @@ class User extends IndexBase
 
 
             $shouyi_total = round(($order_info['price']*($pigInfo['contract_revenue']/100)),2);
+            $sell_price = bcadd($order_info['price'],$shouyi_total,2);
             $kouchu = bcmul($shouyi_total,$kouchu_bili/100);
             if($this->user['pay_points']<$kouchu){
                 $this->error('萝卜余额不足！');
@@ -409,7 +410,7 @@ class User extends IndexBase
                 $saveDate['uid'] = $this->user_id;
                 $saveDate['pig_id'] = $pigInfo['id'];
                 $saveDate['pig_name'] = $pigInfo['name'];
-                $saveDate['price'] = $data['data']['number'];
+                $saveDate['price'] = $sell_price;
                 $saveDate['contract_revenue'] = $pigInfo['contract_revenue'];
                 $saveDate['cycle'] = $pigInfo['cycle'];
                 $saveDate['doge'] = $pigInfo['doge'];
@@ -423,8 +424,8 @@ class User extends IndexBase
                 $sellOrder['order_no'] = create_trade_no();
                 $sellOrder['uid'] = $this->user_id;
                 $sellOrder['pig_id'] = $pigInfo['id'];
-                $sellOrder['source_price'] = $data['data']['number'];
-                $sellOrder['price'] = $data['data']['number'];
+                $sellOrder['source_price'] = $sell_price;
+                $sellOrder['price'] = $sell_price;
                 $sellOrder['pig_name'] = $pigInfo['name'];
                 $sellOrder['create_time'] = time();
                 $sellOrder['sell_id'] = 0;
@@ -433,16 +434,16 @@ class User extends IndexBase
                     //更新用户猪对应的订单号
                     Db::name('user_pigs')->where('id',$sell_id)->update(['order_id'=>$order_id,'end_time'=>time()]);
                     //推广收益减少记录
-                    moneyLog($this->user_id,$this->user_id,$sharetype,-$saveDate['price'],2,'售出'.$sharetypename);
+                    //moneyLog($this->user_id,$this->user_id,$sharetype,-$saveDate['price'],2,'售出'.$sharetypename);
 
                     //萝卜收益减少记录
                     moneyLog($this->user_id,$this->user_id,'pay_points',-$kouchu,2,'宠物'.$id.'转卖售出');
                     Db::name('pig_order')->where('id',$id)->update(['is_sell'=>1,'sell_time'=>time()]);
                     //发放推广收益
                     //上级分成
-                    $pigInfo = Db::name('task_config')->where('id', $id)->field('id,contract_revenue,doge')->find();
+                    //$pigInfo = Db::name('task_config')->where('id', $id)->field('id,contract_revenue,doge')->find();
                     $parents = $this->threeParents($this->user_id);
-                    $contract_revenue = $saveDate['price'] * $pigInfo['contract_revenue'] / 100;
+                    $contract_revenue = $order_info['price'] * $pigInfo['contract_revenue'] / 100;
                     if ($parents['pid'] > 0) {
                         $firstReward = $contract_revenue * $baseConfig['firt_parent'] / 100;
                         $this->addReward($parents['pid'], $this->user_id, 'pay_points', $firstReward, 2, '一代推广');
@@ -540,6 +541,7 @@ class User extends IndexBase
                 $adoptLog[$key]['user_pig'] = $user_pig;
                 $adoptLog[$key]['is_end'] = time()>$user_pig['end_time']?1:0;
             }
+            $adoptLog[$key]['shouyi_total'] = round(($val['price']*($adoptLog[$key]['pig_info']['contract_revenue']/100)),2);
         }
         //申诉记录;
         $sslist = Db::name('shensu')->where('uid',$uid)->select();
@@ -549,6 +551,7 @@ class User extends IndexBase
 //        $wclist['status'] = 2;
 //        $wclist = Db::name('pig_info')->where($wcMap)->select();
         $baseConfig = unserialize(Db::name('system')->where('name','base_config')->value('value'));
+
 
         return view()->assign(['loglist'=>$adoptLog,'sslist'=>$sslist,'time'=>$time,'cancel_time'=>$cancel_time,'kouchu_bili'=>$baseConfig['zhuanmai_kouchu']]);
     }

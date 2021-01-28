@@ -250,7 +250,7 @@
                   <div class="button" onclick="tihuo({$vl.id},{$vl.price})"><div class="fs30 fw_b color_f">提货</div></div>
                 </div>
                 <div class="enj">
-                <div class="button" onclick="zhuanmai({$vl.id},{$vl.price})"><div class="fs30 fw_b color_f">转卖</div></div>
+                <div class="button" onclick="zhuanmai({$vl.id},{$vl.price},{$vl.shouyi_total})"><div class="fs30 fw_b color_f">转卖</div></div>
                 </div>
                 {/if}
                 {/if}
@@ -828,9 +828,9 @@
         })
 
       });
-      function zhuanmai($id,$number) {
+      function zhuanmai($id,$number,$shouyi_total) {
           var kouchu_bili = '{$kouchu_bili}';
-          var kouchu = $number*kouchu_bili/100;
+          var kouchu = $shouyi_total*kouchu_bili/100;
           var content = '根据转卖规则，你再转卖前需支付买入价的'+kouchu_bili+'%作为手续费，支付前请确认如下信息：' +
               '你的购买单价为：'+$number+'元，您的转卖单价为：'+$number+'元，你实付的转卖手续费为：'+kouchu+'电力，（提示L:请在支付前确认你的电力' +
               '大于 电力方可转卖成功）';
