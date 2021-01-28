@@ -46,6 +46,7 @@ class TradeHome extends IndexBase
         $pigMap = [];
         $pigMap['p.pig_id'] = $id;
         $pigMap['p.status'] = 0;
+        $pigMap['uid'] = ['neq',$this->user_id];
         $piglist = Db::name('pig_order')
             ->alias('p')
             ->join('user u','u.id=p.uid')

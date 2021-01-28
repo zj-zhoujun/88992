@@ -163,9 +163,9 @@
 
                   <div>价值：<span class="color_r fw_b">{$vl.price}</span>≈{$vl.price}PIG</div>
 
-                  <div>合约收益：<span class="color_r fw_b">{$vl.pig_info.cycle}天/{$vl.pig_info.contract_revenue}%</span></div>
+                  <div>合约收益：<span class="color_r fw_b">{$vl.pig_info.cycle}分/{$vl.pig_info.contract_revenue}%</span></div>
 				  
-				  <div>获取收益：<span class="color_r fw_b">{php}echo round(($vl['price']*($vl['pig_info']['contract_revenue']/100))/$vl['pig_info']['cycle'],2);{/php}/天</span></div>
+				  <div>获取收益：<span class="color_r fw_b">{php}echo round(($vl['price']*($vl['pig_info']['contract_revenue']/100))/$vl['pig_info']['cycle'],2);{/php}</span></div>
 
                   <div>抢矿時間：{$vl.create_time|date="Y.m.d H:i:s",###}</div>
 
@@ -225,7 +225,7 @@
 
                   <div>价值：<span class="color_r fw_b">{$vl.price}</span>≈{$vl.price}PIG</div>
 
-                  <div>合约时间：<span class="color_r fw_b">{$vl.pig_info.cycle}天/{$vl.pig_info.contract_revenue}%</span></div>
+                  <div>合约时间：<span class="color_r fw_b">{$vl.pig_info.cycle}分/{$vl.pig_info.contract_revenue}%</span></div>
 				  
                   <div>获得收益：<span class="color_r fw_b">{php}echo round(($vl['price']*($vl['pig_info']['contract_revenue']/100)),2);{/php}</span></div>
 				  

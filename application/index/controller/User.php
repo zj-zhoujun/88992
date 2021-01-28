@@ -458,7 +458,7 @@ class User extends IndexBase
                         //累计奖励
                         Db::name('user')->where('id', $parents['pid2'])->setInc('total_share_integral');
                         //资产记录
-                        moneyLog($parents['pid'], $this->user_id, 'pay_points', $secondReward, 4, '二代推广收益');
+                        moneyLog($parents['pid2'], $this->user_id, 'pay_points', $secondReward, 4, '二代推广收益');
                     }
 
                     if ($parents['pid3'] > 0) {
@@ -467,7 +467,7 @@ class User extends IndexBase
                         //累计奖励
                         Db::name('user')->where('id', $parents['pid3'])->setInc('total_share_integral');
                         //资产记录
-                        moneyLog($parents['pid'],  $this->user_id, 'pay_points', $thirdReward, 4, '三代推广收益');
+                        moneyLog($parents['pid3'],  $this->user_id, 'pay_points', $thirdReward, 4, '三代推广收益');
                     }
                     $this->success('出售成功');
                 } else {
@@ -590,7 +590,7 @@ class User extends IndexBase
         //echo $id;
         if ($this->request->isPost()) {
             $data = $this->request->post();
-            dump($data);
+            //dump($data);
             $paypwd = $data['data']['paypwd'];
             if (md5($paypwd.config('salt')) != $this->user['pay_password']) {
                 $this->error('二级密码不正确');
