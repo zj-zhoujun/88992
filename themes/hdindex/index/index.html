@@ -54,7 +54,7 @@
             {case value="1"} <a href="javascript:;" class="btn-apply buttoning" data-id="{$pig.id}" style="background-color:#3ec077">预约抢购</a>{/case}
             {case value="2"} <a href="{:url('TradeHome/index',array('id'=>$pig['id']))}" class="btn-buy-w buttoning" style="background-color:#3ec077">可抢购</a>{/case}
             {case value="3"} <a href="javascript:;" class="btn-buy-w buttoning">公布中</a>{/case}
-            {case value="4"} <a href="javascript:;" class="btn-buy buttoning level_btn kaijiang" data-id="{$pig.id}" data-endtime="{$pig.end_time}">抢购</a>{/case}
+            {case value="4"} <a href="{:url('TradeHome/index',array('id'=>$pig['id']))}" class="btn-buy buttoning level_btn kaijiang" data-id="{$pig.id}" data-endtime="{$pig.end_time}">抢购</a>{/case}
             {/switch}
         </div>
     </div>

@@ -831,8 +831,10 @@
       function zhuanmai($id,$number,$shouyi_total) {
           var kouchu_bili = '{$kouchu_bili}';
           var kouchu = $shouyi_total*kouchu_bili/100;
+          var sell_price = Math.round(($number+$shouyi_total)*100)/100;
+
           var content = '根据转卖规则，你再转卖前需支付买入价的'+kouchu_bili+'%作为手续费，支付前请确认如下信息：' +
-              '你的购买单价为：'+$number+'元，您的转卖单价为：'+$number+'元，你实付的转卖手续费为：'+kouchu+'电力，（提示L:请在支付前确认你的电力' +
+              '你的购买单价为：'+$number+'元，您的转卖单价为：'+sell_price+'元，你实付的转卖手续费为：'+kouchu+'电力，（提示L:请在支付前确认你的电力' +
               '大于 电力方可转卖成功）';
           layer.open({
               skin: 'layui-layer-rim', //加上边框

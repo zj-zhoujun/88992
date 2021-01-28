@@ -273,7 +273,7 @@ class Index extends IndexBase
         $map['create_time'] = ['gt',$today];
         $alread_res = Db::name('yuyue')->where($map)->find();
         if($alread_res){
-            $this->error('您今天已经抢到一个'.$pigInfo['name'].'了，明天再来哦');
+            //$this->error('您今天已经抢到一个'.$pigInfo['name'].'了，明天再来哦');
         }
 
         $map = [];
