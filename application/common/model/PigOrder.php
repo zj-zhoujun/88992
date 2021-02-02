@@ -57,16 +57,28 @@ class PigOrder extends Model
             $userPig['end_time'] = time()+$pigInfo['cycle']*60-$sell_end_time;
             Db::name('user_pigs')->where('order_id',$id)->update($userPig);
             //增加推荐人推荐的购买次数,满足条件升级绿色通道
-            $intro_id = Db::name('user_relation')->where('uid',$orderInfo['uid'])->value('pid');
-            Db::name('user')->where('id',$intro_id)->setField('tj_buy',1);
-            $tj_buy = Db::name('user')->where('id',$intro_id)->value('tj_buy');
-            $user_rank_set = Db::name('user_rank')->where(['level'=>['in',[30,40]]])->order('level desc')->column('team','level');
-            foreach($user_rank_set as $level=>$team){
-                if($tj_buy>=$team){
-                    model('User')->uplv($intro_id,$team);
-                    break;
+            Db::name('user')->where('id',$orderInfo['uid'])->setInc('self_buy',1);
+            $self_buy = Db::name('user')->where('id',$orderInfo['uid'])->value('self_buy');
+            if($self_buy==1){
+                $intro_ids = Db::name('user_relation')->where('uid',$orderInfo['uid'])->value('rel');
+                $intro_ids = explode(',',$intro_ids);
+                Db::name('user')->where(['id'=>['in',$intro_ids]])->setInc('tj_buy',1);
+                foreach($intro_ids as $intro_id){
+                    if(!$intro_id){
+                        continue;
+                    }
+                    $tj_buy = Db::name('user')->where('id',$intro_id)->value('tj_buy');
+                    $user_rank_set = Db::name('user_rank')->where(['level'=>['in',[30,40]]])->order('level desc')->column('team','level');
+                    foreach($user_rank_set as $level=>$team){
+                        if($tj_buy>=$team){
+                            model('User')->uplv($intro_id,$level);
+                            break;
+                        }
+                    }
                 }
             }
+
+
             //销毁原来的猪
 //            $map = [];
 //            $map['order_id'] = $id;

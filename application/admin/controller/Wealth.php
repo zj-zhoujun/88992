@@ -95,7 +95,7 @@ class Wealth extends AdminBase
             if($data['money_type']=='pay_points'){
                 $user_rank_set = Db::name('user_rank')->where(['level'=>10])->order('level desc')->value('money');
                 if($money>=$user_rank_set){
-                    model('User')->uplv($id,20);
+                    model('User')->uplv($id,10);
                 }
             }
             //dump($money);die;

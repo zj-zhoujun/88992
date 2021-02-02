@@ -280,7 +280,7 @@ class User extends IndexBase
             //升级绿色通道
             $user_rank_set = Db::name('user_rank')->where(['level'=>10])->order('level desc')->value('money');
             if($number>=$user_rank_set){
-                model('User')->uplv($tranUser['id'],20);
+                model('User')->uplv($tranUser['id'],10);
             }
             $this->success('转增成功');
         }
@@ -1034,7 +1034,51 @@ class User extends IndexBase
         return view();
     }
 
+    public function test(){
+        Db::startTrans();
+        Db::name('user')->where('1=1')->update(['tj_buy'=>0,'self_buy'=>0,'user_rank'=>0,'rank_time'=>0]);
+        $list1 = Db::name('identity_auth')->where(['status'=>1])->select();
 
+        foreach($list1 as $v1){
+            Db::name('user')->where('id',$v1['uid'])->update(['user_rank'=>20,'rank_time'=>$v1['create_time']]);
+        }
+        $list2 = Db::name('money_log')->where(['type'=>1,'currency'=>'pay_points','amount'=>['egt',1000]])->select();
+        foreach($list2 as $v2){
+            Db::name('user')->where('id',$v2['user_id'])->update(['user_rank'=>10,'rank_time'=>strtotime($v2['create_time'])]);
+        }
+        $list = Db::name('pig_order')->where('status',3)->select();
+        //dump($list);exit;
+        foreach($list as $v){
+            Db::name('user')->where('id',$v['uid'])->setInc('self_buy',1);
+            $self_buy = Db::name('user')->where('id',$v['uid'])->value('self_buy');
+            if($self_buy==1){
+                $intro_ids = Db::name('user_relation')->where('uid',$v['uid'])->value('rel');
+                $intro_ids = explode(',',$intro_ids);
+                Db::name('user')->where(['id'=>['in',$intro_ids]])->setInc('tj_buy',1);
+                foreach($intro_ids as $intro_id){
+                    if(!$intro_id){
+                        continue;
+                    }
+                    $tj_buy = Db::name('user')->where('id',$intro_id)->value('tj_buy');
+                    $user_rank_set = Db::name('user_rank')->where(['level'=>['in',[30,40]]])->order('level desc')->column('team','level');
+                    foreach($user_rank_set as $level=>$team){
+                        if($tj_buy>=$team){
+                            model('User')->uplv($intro_id,$level);
+
+                            $user_rank = Db::name('user')->where('id',$intro_id)->value('user_rank');
+                            if($user_rank>=$level){
+                                continue;
+                            }
+                            Db::name('user')->where('id',$intro_id)->update(['user_rank'=>$level,'rank_time'=>$v['update_time']]);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        Db::commit();
+        die('stop');
+    }
 
 
 

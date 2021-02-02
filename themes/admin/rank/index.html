@@ -17,6 +17,7 @@
                     <tr>
                         <th style="width: 30px;">id</th>
                         <th>名称</th>
+                        <th>级别值</th>
                         <th>获取条件</th>
                         <th>提前入场时间（分钟）</th>
                         <th>更新时间</th>
@@ -28,6 +29,7 @@
                     <tr>
                         <td>{$vo.id}</td>
                         <td>{$vo.name}</td>
+                        <td>{$vo.level}</td>
                         <td>
                             {$vo.cond}:
                             {if condition="$vo['level'] eq 10"}{$vo.money}{/if}
