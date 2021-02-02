@@ -222,13 +222,39 @@ class Index extends IndexBase
         //dump($data);
         $id = $data['id'];
         $pig_order = Db::name('pig_order')->where('id',$id)->find();
+
         $pig_id = $pig_order['pig_id'];
         $pigInfo =  Db::name('task_config')->where('id',$pig_id)->find();
-        $nowTime = date('H:i');
-        if ($nowTime<$pigInfo['start_time'] || $nowTime>$pigInfo['end_time'])
+        //绿色通道
+        $user = $this->user;
+        $rank_info = Db::name('user_rank')->where('level',$user['user_rank'])->find();
+        $prep = 0;//提前入场时间
+        if($user['user_rank']>0 ){
+            $prep = $rank_info['prep'];
+        }
+        //判断会员级别是否到期
+        if($rank_info['days']>0){
+            $end_time = $user['rank_time']+86400*$rank_info['days'];
+            if($end_time<=time()){
+                Db::name('user')->where('id',$this->user_id)->update(['user_rank'=>0,'rank_time'=>0]);
+                $prep = 0;
+            }
+        }
+        $start_time = $pigInfo['start_time'];//开抢时间
+
+        $enter_time = date('H:i',strtotime($start_time)-$prep*60);
+        
+        if ($enter_time>date('H:i') || date('H:i')>$pigInfo['end_time'])
         {
             $this->error('不是开抢时间');
         }
+
+
+//        $nowTime = date('H:i');
+//        if ($nowTime<$pigInfo['start_time'] || $nowTime>$pigInfo['end_time'])
+//        {
+//            $this->error('不是开抢时间');
+//        }
 
         //萝卜要满足后台条件才可以(30天内为新会员)
         $baseConfig = unserialize(Db::name('system')->where('name','base_config')->value('value'));
@@ -273,7 +299,7 @@ class Index extends IndexBase
         $map['create_time'] = ['gt',$today];
         $alread_res = Db::name('yuyue')->where($map)->find();
         if($alread_res){
-            $this->error('您今天已经抢到一个'.$pigInfo['name'].'了，明天再来哦');
+            //$this->error('您今天已经抢到一个'.$pigInfo['name'].'了，明天再来哦');
         }
 
         $map = [];
