@@ -322,7 +322,7 @@ class User extends AdminBase
         Db::startTrans();
         $res = Db::name('identity_auth')->where('id',$id)->setField('status',1);
         $info = Db::name('identity_auth')->where('id',$id)->find();
-        model('User')->uplv($info['uid'],20);
+        model('User')->uplv($info['uid'],10);
         Db::commit();
         if ($res) {
             $this->success('操作成功');

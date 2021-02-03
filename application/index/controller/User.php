@@ -278,9 +278,9 @@ class User extends IndexBase
             //会员等级
             model('UserLevel')->updateLevel($tranUser['id']);
             //升级绿色通道
-            $user_rank_set = Db::name('user_rank')->where(['level'=>10])->order('level desc')->value('money');
+            $user_rank_set = Db::name('user_rank')->where(['level'=>20])->order('level desc')->value('money');
             if($number>=$user_rank_set){
-                model('User')->uplv($tranUser['id'],10);
+                model('User')->uplv($tranUser['id'],20);
             }
             $this->success('转增成功');
         }
@@ -351,7 +351,7 @@ class User extends IndexBase
             $sharetypename = '收益转存';
             if($data['data']['typeid']==0){
                 if ($data['data']['number']>$baseConfig['sare_sell_max'] || $data['data']['number']<$baseConfig['sare_sell_min']) {
-                    $this->error('请输入'.$baseConfig['sare_sell_min'].'--'.$baseConfig['sare_sell_max'].'的'.$sharetypename.'出售数目');
+                    //$this->error('请输入'.$baseConfig['sare_sell_min'].'--'.$baseConfig['sare_sell_max'].'的'.$sharetypename.'出售数目');
                 }
                 $sharetype = 'share_integral';
                 $sharetypename = '收益转存';
